@@ -192,7 +192,7 @@ export default function LogsPage() {
           onChange={e => setSearch(e.target.value)}
           placeholder="店名・豆名・産地で検索..."
           className="w-full px-3 py-2 rounded-xl border text-sm"
-          style={{ borderColor: "var(--border)", background: "#fff" }}
+          style={{ borderColor: "var(--border)", background: "#fff", fontSize: "16px" }}
         />
       </div>
 
@@ -216,8 +216,8 @@ export default function LogsPage() {
           <select
             value={storeFilter}
             onChange={e => setStoreFilter(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl border text-sm"
-            style={{ borderColor: "var(--border)", background: "#fff" }}
+            className="w-full px-3 py-2 rounded-xl border"
+            style={{ borderColor: "var(--border)", background: "#fff", fontSize: "16px" }}
           >
             <option value="">すべてのお店</option>
             {cafeStores.map(s => <option key={s!} value={s!}>{s}</option>)}
@@ -230,8 +230,8 @@ export default function LogsPage() {
         <select
           value={sort}
           onChange={e => setSort(e.target.value as SortKey)}
-          className="flex-1 px-3 py-2 rounded-xl border text-xs"
-          style={{ borderColor: "var(--border)", background: "#fff" }}
+          className="flex-1 px-3 py-2 rounded-xl border"
+          style={{ borderColor: "var(--border)", background: "#fff", fontSize: "16px" }}
         >
           <option value="newest">新しい順</option>
           <option value="rating_desc">評価が高い順</option>

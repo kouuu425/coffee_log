@@ -90,7 +90,7 @@ export default function Home() {
                 onChange={(e) => setForm({ ...form, date: e.target.value })}
                 required
                 className="w-full px-3 py-2 rounded-lg border text-sm"
-                style={{ borderColor: "var(--border)", background: "#fafafa" }}
+                style={{ borderColor: "var(--border)", background: "#fafafa", fontSize: "16px" }}
               />
             </div>
             {isHome && (
@@ -102,7 +102,7 @@ export default function Home() {
                   onChange={(e) => setForm({ ...form, grind_size: e.target.value })}
                   step="any" min="0" placeholder="例: 15" required
                   className="w-full px-3 py-2 rounded-lg border text-sm"
-                  style={{ borderColor: "var(--border)", background: "#fafafa" }}
+                  style={{ borderColor: "var(--border)", background: "#fafafa", fontSize: "16px" }}
                 />
               </div>
             )}
@@ -116,7 +116,7 @@ export default function Home() {
                 value={form.grinder}
                 onChange={(e) => setForm({ ...form, grinder: e.target.value })}
                 className="w-full px-3 py-2 rounded-lg border text-sm"
-                style={{ borderColor: "var(--border)", background: "#fafafa" }}
+                style={{ borderColor: "var(--border)", background: "#fafafa", fontSize: "16px" }}
               >
                 <option value="">選択してください</option>
                 {GRINDERS.map((g) => <option key={g} value={g}>{g}</option>)}
@@ -135,7 +135,7 @@ export default function Home() {
               onChange={(e) => setForm({ ...form, bean: e.target.value })}
               placeholder={isHome ? "例: Blue Bottle Coffee" : "例: %Arabica, 猿田彦珈琲"}
               className="w-full px-3 py-2 rounded-lg border text-sm"
-              style={{ borderColor: "var(--border)", background: "#fafafa" }}
+              style={{ borderColor: "var(--border)", background: "#fafafa", fontSize: "16px" }}
             />
           </div>
 
@@ -148,7 +148,7 @@ export default function Home() {
               onChange={(e) => setForm({ ...form, origin: e.target.value })}
               placeholder="例: エチオピア, ブラジル, コロンビア"
               className="w-full px-3 py-2 rounded-lg border text-sm"
-              style={{ borderColor: "var(--border)", background: "#fafafa" }}
+              style={{ borderColor: "var(--border)", background: "#fafafa", fontSize: "16px" }}
             />
           </div>
 
@@ -186,7 +186,7 @@ export default function Home() {
               placeholder="味の感想、次回への改善点など"
               rows={2}
               className="w-full px-3 py-2 rounded-lg border text-sm resize-y"
-              style={{ borderColor: "var(--border)", background: "#fafafa" }}
+              style={{ borderColor: "var(--border)", background: "#fafafa", fontSize: "16px" }}
             />
           </div>
 
