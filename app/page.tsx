@@ -57,7 +57,7 @@ export default function Home() {
         </button>
       </div>
 
-      <div className="bg-white rounded-2xl p-4 shadow-sm">
+      <div className="bg-white rounded-2xl p-4 shadow-sm overflow-hidden">
         <form onSubmit={handleSubmit} className="space-y-3">
 
           {/* 家/お店トグル */}
@@ -81,27 +81,27 @@ export default function Home() {
           </div>
 
           {/* 日付 + 挽き目 */}
-          <div className="flex gap-3">
-            <div className={isHome ? "flex-1" : "w-full"}>
+          <div className="flex gap-3 min-w-0">
+            <div className={`min-w-0 ${isHome ? "flex-1" : "flex-1"}`}>
               <label className="block text-xs font-semibold mb-1" style={{ color: "var(--primary)" }}>日付</label>
               <input
                 type="date"
                 value={form.date}
                 onChange={(e) => setForm({ ...form, date: e.target.value })}
                 required
-                className="w-full px-3 py-2 rounded-lg border text-sm"
+                className="w-full min-w-0 px-3 py-2 rounded-lg border"
                 style={{ borderColor: "var(--border)", background: "#fafafa", fontSize: "16px" }}
               />
             </div>
             {isHome && (
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <label className="block text-xs font-semibold mb-1" style={{ color: "var(--primary)" }}>挽き目</label>
                 <input
                   type="number"
                   value={form.grind_size}
                   onChange={(e) => setForm({ ...form, grind_size: e.target.value })}
                   step="any" min="0" placeholder="例: 15" required
-                  className="w-full px-3 py-2 rounded-lg border text-sm"
+                  className="w-full min-w-0 px-3 py-2 rounded-lg border"
                   style={{ borderColor: "var(--border)", background: "#fafafa", fontSize: "16px" }}
                 />
               </div>
