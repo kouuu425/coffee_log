@@ -9,7 +9,8 @@ export type CoffeeLog = {
   id: number;
   created_at: string;
   date: string;
-  grind_size: number;
+  location_type: "home" | "cafe";
+  grind_size: number | null;
   grinder: string | null;
   bean: string | null;
   origin: string | null;

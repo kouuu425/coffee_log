@@ -14,15 +14,15 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { date, grind_size, grinder, bean, origin, rating, memo } = body;
+  const { date, location_type, grind_size, grinder, bean, origin, rating, memo } = body;
 
-  if (!date || grind_size === undefined) {
-    return NextResponse.json({ error: "date と grind_size は必須です" }, { status: 400 });
+  if (!date) {
+    return NextResponse.json({ error: "date は必須です" }, { status: 400 });
   }
 
   const { data, error } = await supabase
     .from("coffee_logs")
-    .insert([{ date, grind_size, grinder, bean, origin, rating, memo }])
+    .insert([{ date, location_type: location_type ?? "home", grind_size: grind_size ?? null, grinder, bean, origin, rating, memo }])
     .select()
     .single();
 

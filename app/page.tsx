@@ -5,22 +5,24 @@ import type { CoffeeLog } from "@/lib/supabase";
 
 const GRINDERS = ["デリモ電動コーヒーミル"];
 
+const defaultForm = (today: string) => ({
+  date: today,
+  location_type: "home" as "home" | "cafe",
+  grind_size: "",
+  grinder: "",
+  bean: "",
+  origin: "",
+  rating: 3.0,
+  memo: "",
+});
+
 export default function Home() {
   const [logs, setLogs] = useState<CoffeeLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const today = new Date().toLocaleDateString("sv-SE"); // YYYY-MM-DD
-
-  const [form, setForm] = useState({
-    date: today,
-    grind_size: "",
-    grinder: "",
-    bean: "",
-    origin: "",
-    rating: 3.0,
-    memo: "",
-  });
+  const today = new Date().toLocaleDateString("sv-SE");
+  const [form, setForm] = useState(defaultForm(today));
 
   const fetchLogs = useCallback(async () => {
     setLoading(true);
@@ -36,7 +38,8 @@ export default function Home() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.date || !form.grind_size) return;
+    if (!form.date) return;
+    if (form.location_type === "home" && !form.grind_size) return;
 
     setSaving(true);
     await fetch("/api/logs", {
@@ -44,11 +47,11 @@ export default function Home() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...form,
-        grind_size: parseFloat(form.grind_size),
+        grind_size: form.grind_size ? parseFloat(form.grind_size) : null,
       }),
     });
 
-    setForm({ date: today, grind_size: "", grinder: "", bean: "", origin: "", rating: 3.0, memo: "" });
+    setForm(defaultForm(today));
     await fetchLogs();
     setSaving(false);
   }
@@ -59,9 +62,9 @@ export default function Home() {
     setLogs((prev) => prev.filter((l) => l.id !== id));
   }
 
-  // Autocomplete suggestions from existing logs
   const beanSuggestions = [...new Set(logs.map((l) => l.bean).filter(Boolean))];
   const originSuggestions = [...new Set(logs.map((l) => l.origin).filter(Boolean))];
+  const isHome = form.location_type === "home";
 
   return (
     <main className="max-w-lg mx-auto px-4 py-6 pb-16">
@@ -72,8 +75,36 @@ export default function Home() {
       {/* Form */}
       <div className="bg-white rounded-2xl p-4 mb-6 shadow-sm">
         <form onSubmit={handleSubmit} className="space-y-3">
+
+          {/* 家/お店トグル */}
+          <div className="flex rounded-xl overflow-hidden border" style={{ borderColor: "var(--border)" }}>
+            <button
+              type="button"
+              onClick={() => setForm({ ...form, location_type: "home" })}
+              className="flex-1 py-2.5 text-sm font-semibold transition-colors"
+              style={{
+                background: isHome ? "var(--primary)" : "#fafafa",
+                color: isHome ? "#fff" : "var(--text-muted)",
+              }}
+            >
+              🏠 家で飲んだ
+            </button>
+            <button
+              type="button"
+              onClick={() => setForm({ ...form, location_type: "cafe", grind_size: "", grinder: "" })}
+              className="flex-1 py-2.5 text-sm font-semibold transition-colors"
+              style={{
+                background: !isHome ? "var(--primary)" : "#fafafa",
+                color: !isHome ? "#fff" : "var(--text-muted)",
+              }}
+            >
+              ☕ お店で飲んだ
+            </button>
+          </div>
+
+          {/* 日付 + 挽き目（家のみ） */}
           <div className="flex gap-3">
-            <div className="flex-1">
+            <div className={isHome ? "flex-1" : "w-full"}>
               <label className="block text-xs font-semibold mb-1" style={{ color: "var(--primary)" }}>
                 日付
               </label>
@@ -86,51 +117,57 @@ export default function Home() {
                 style={{ borderColor: "var(--border)", background: "#fafafa" }}
               />
             </div>
-            <div className="flex-1">
+            {isHome && (
+              <div className="flex-1">
+                <label className="block text-xs font-semibold mb-1" style={{ color: "var(--primary)" }}>
+                  挽き目
+                </label>
+                <input
+                  type="number"
+                  value={form.grind_size}
+                  onChange={(e) => setForm({ ...form, grind_size: e.target.value })}
+                  step="any"
+                  min="0"
+                  placeholder="例: 15"
+                  required
+                  className="w-full px-3 py-2 rounded-lg border text-sm"
+                  style={{ borderColor: "var(--border)", background: "#fafafa" }}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* コーヒーミル（家のみ） */}
+          {isHome && (
+            <div>
               <label className="block text-xs font-semibold mb-1" style={{ color: "var(--primary)" }}>
-                挽き目
+                コーヒーミル
               </label>
-              <input
-                type="number"
-                value={form.grind_size}
-                onChange={(e) => setForm({ ...form, grind_size: e.target.value })}
-                step="any"
-                min="0"
-                placeholder="例: 15"
-                required
+              <select
+                value={form.grinder}
+                onChange={(e) => setForm({ ...form, grinder: e.target.value })}
                 className="w-full px-3 py-2 rounded-lg border text-sm"
                 style={{ borderColor: "var(--border)", background: "#fafafa" }}
-              />
+              >
+                <option value="">選択してください</option>
+                {GRINDERS.map((g) => (
+                  <option key={g} value={g}>{g}</option>
+                ))}
+              </select>
             </div>
-          </div>
+          )}
 
+          {/* コーヒー豆 */}
           <div>
             <label className="block text-xs font-semibold mb-1" style={{ color: "var(--primary)" }}>
-              コーヒーミル
-            </label>
-            <select
-              value={form.grinder}
-              onChange={(e) => setForm({ ...form, grinder: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg border text-sm"
-              style={{ borderColor: "var(--border)", background: "#fafafa" }}
-            >
-              <option value="">選択してください</option>
-              {GRINDERS.map((g) => (
-                <option key={g} value={g}>{g}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold mb-1" style={{ color: "var(--primary)" }}>
-              コーヒー豆（購入店/ブランド）
+              {isHome ? "コーヒー豆（購入店/ブランド）" : "お店の名前"}
             </label>
             <input
               type="text"
               value={form.bean}
               onChange={(e) => setForm({ ...form, bean: e.target.value })}
               list="bean-list"
-              placeholder="例: Blue Bottle Coffee"
+              placeholder={isHome ? "例: Blue Bottle Coffee" : "例: %Arabica, 猿田彦珈琲"}
               className="w-full px-3 py-2 rounded-lg border text-sm"
               style={{ borderColor: "var(--border)", background: "#fafafa" }}
             />
@@ -139,6 +176,7 @@ export default function Home() {
             </datalist>
           </div>
 
+          {/* 豆の産地 */}
           <div>
             <label className="block text-xs font-semibold mb-1" style={{ color: "var(--primary)" }}>
               豆の産地
@@ -157,6 +195,7 @@ export default function Home() {
             </datalist>
           </div>
 
+          {/* 味の評価 */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-xs font-semibold" style={{ color: "var(--primary)" }}>味の評価</label>
@@ -189,6 +228,7 @@ export default function Home() {
             </div>
           </div>
 
+          {/* メモ */}
           <div>
             <label className="block text-xs font-semibold mb-1" style={{ color: "var(--primary)" }}>
               メモ
@@ -225,37 +265,53 @@ export default function Home() {
         <div className="text-center py-8 text-sm" style={{ color: "var(--text-muted)" }}>まだ記録がありません</div>
       ) : (
         <div className="space-y-3">
-          {logs.map((log) => (
-            <div key={log.id} className="bg-white rounded-2xl px-4 py-3 shadow-sm relative">
-              <button
-                onClick={() => handleDelete(log.id)}
-                className="absolute top-3 right-3 text-lg leading-none"
-                style={{ color: "var(--border)" }}
-              >
-                ×
-              </button>
-              <div className="text-xs mb-1" style={{ color: "var(--text-muted)" }}>{log.date}</div>
-              <div className="font-semibold text-sm mb-1">挽き目: {log.grind_size}</div>
-              <div className="text-xs space-y-0.5" style={{ color: "var(--primary)" }}>
-                {log.grinder && <div>ミル: {log.grinder}</div>}
-                {log.bean && <div>豆: {log.bean}</div>}
-                {log.origin && <div>産地: {log.origin}</div>}
-              </div>
-              {log.rating && (
-                <div className="text-xs mt-1" style={{ color: "var(--accent)" }}>
-                  ★ {Number(log.rating).toFixed(1)} / 5.0
-                </div>
-              )}
-              {log.memo && (
-                <div
-                  className="text-xs mt-2 pt-2 whitespace-pre-wrap"
-                  style={{ borderTop: "1px solid var(--border)", color: "var(--text-muted)" }}
+          {logs.map((log) => {
+            const isHomeLog = log.location_type !== "cafe";
+            return (
+              <div key={log.id} className="bg-white rounded-2xl px-4 py-3 shadow-sm relative">
+                <button
+                  onClick={() => handleDelete(log.id)}
+                  className="absolute top-3 right-3 text-lg leading-none"
+                  style={{ color: "var(--border)" }}
                 >
-                  {log.memo}
+                  ×
+                </button>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xs" style={{ color: "var(--text-muted)" }}>{log.date}</span>
+                  <span
+                    className="text-xs px-1.5 py-0.5 rounded-full font-medium"
+                    style={{
+                      background: isHomeLog ? "#efebe9" : "#fff8e1",
+                      color: isHomeLog ? "var(--primary)" : "#f57f17",
+                    }}
+                  >
+                    {isHomeLog ? "🏠 家" : "☕ お店"}
+                  </span>
                 </div>
-              )}
-            </div>
-          ))}
+                {isHomeLog && log.grind_size != null && (
+                  <div className="font-semibold text-sm mb-1">挽き目: {log.grind_size}</div>
+                )}
+                <div className="text-xs space-y-0.5" style={{ color: "var(--primary)" }}>
+                  {isHomeLog && log.grinder && <div>ミル: {log.grinder}</div>}
+                  {log.bean && <div>{isHomeLog ? "豆" : "お店"}: {log.bean}</div>}
+                  {log.origin && <div>産地: {log.origin}</div>}
+                </div>
+                {log.rating && (
+                  <div className="text-xs mt-1" style={{ color: "var(--accent)" }}>
+                    ★ {Number(log.rating).toFixed(1)} / 5.0
+                  </div>
+                )}
+                {log.memo && (
+                  <div
+                    className="text-xs mt-2 pt-2 whitespace-pre-wrap"
+                    style={{ borderTop: "1px solid var(--border)", color: "var(--text-muted)" }}
+                  >
+                    {log.memo}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </main>
