@@ -158,26 +158,34 @@ export default function Home() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold mb-1" style={{ color: "var(--primary)" }}>
-              味の評価
-              <span className="font-bold text-base" style={{ color: "var(--primary-dark)" }}>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-xs font-semibold" style={{ color: "var(--primary)" }}>味の評価</label>
+              <span className="text-2xl font-bold" style={{ color: "var(--accent)" }}>
                 {form.rating.toFixed(1)}
+                <span className="text-xs font-normal" style={{ color: "var(--text-muted)" }}> / 5.0</span>
               </span>
-              <span className="text-xs font-normal" style={{ color: "var(--text-muted)" }}> / 5.0</span>
-            </label>
-            <div className="flex items-center gap-2">
-              <span className="text-xs" style={{ color: "var(--text-muted)" }}>1</span>
-              <input
-                type="range"
-                min="1"
-                max="5"
-                step="0.1"
-                value={form.rating}
-                onChange={(e) => setForm({ ...form, rating: parseFloat(e.target.value) })}
-                className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
-                style={{ accentColor: "var(--accent)" }}
-              />
-              <span className="text-xs" style={{ color: "var(--text-muted)" }}>5</span>
+            </div>
+            <input
+              type="range"
+              min="1"
+              max="5"
+              step="0.1"
+              value={form.rating}
+              onChange={(e) => setForm({ ...form, rating: parseFloat(e.target.value) })}
+              className="w-full appearance-none cursor-pointer"
+              style={{
+                accentColor: "var(--accent)",
+                height: "6px",
+                borderRadius: "9999px",
+                background: `linear-gradient(to right, var(--accent) 0%, var(--accent) ${(form.rating - 1) / 4 * 100}%, var(--border) ${(form.rating - 1) / 4 * 100}%, var(--border) 100%)`,
+              }}
+            />
+            <div className="flex justify-between mt-1">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <span key={n} className="text-xs" style={{ color: form.rating >= n ? "var(--accent)" : "var(--border)" }}>
+                  {n}
+                </span>
+              ))}
             </div>
           </div>
 
