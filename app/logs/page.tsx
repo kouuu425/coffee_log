@@ -202,8 +202,8 @@ export default function LogsPage() {
           <button
             key={t}
             onClick={() => { setTab(t); setStoreFilter(""); setGrouped(t === "cafe"); }}
-            className="flex-1 py-2 text-xs font-semibold transition-colors"
-            style={tabStyle(tab === t)}
+            className="flex-1 py-2.5 font-semibold transition-colors"
+            style={{ ...tabStyle(tab === t), fontSize: "13px" }}
           >
             {t === "all" ? "すべて" : t === "home" ? "🏠 家" : "☕ お店"}
           </button>
