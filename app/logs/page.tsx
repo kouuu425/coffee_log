@@ -120,8 +120,13 @@ export default function LogsPage() {
 
   const fetchLogs = useCallback(async () => {
     setLoading(true);
-    const res = await fetch("/api/logs");
-    setLogs(await res.json());
+    try {
+      const res = await fetch("/api/logs");
+      const data = await res.json();
+      setLogs(Array.isArray(data) ? data : []);
+    } catch {
+      setLogs([]);
+    }
     setLoading(false);
   }, []);
 
