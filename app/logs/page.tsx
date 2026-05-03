@@ -138,6 +138,38 @@ export default function LogsPage() {
     setLogs(prev => prev.filter(l => l.id !== id));
   }
 
+  function handleExport() {
+    if (logs.length === 0) return;
+
+    const COLUMNS: (keyof CoffeeLog)[] = [
+      "id", "date", "created_at", "location_type",
+      "bean", "origin", "grind_size", "grinder",
+      "rating", "memo",
+    ];
+
+    const escapeCell = (value: unknown): string => {
+      if (value === null || value === undefined) return "";
+      const str = String(value);
+      if (str.includes(",") || str.includes('"') || str.includes("\n") || str.includes("\r")) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
+    const header = COLUMNS.join(",");
+    const rows = logs.map(log => COLUMNS.map(col => escapeCell(log[col])).join(","));
+    const csv = [header, ...rows].join("\n");
+
+    const bom = "﻿";
+    const blob = new Blob([bom + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `coffee_log_${new Date().toLocaleDateString("sv-SE")}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   // ユニークな店名リスト（お店のみ）
   const cafeStores = useMemo(() =>
     [...new Set(logs.filter(l => l.location_type === "cafe").map(l => l.bean).filter(Boolean))].sort(),
@@ -178,15 +210,25 @@ export default function LogsPage() {
   return (
     <main className="max-w-lg mx-auto px-4 py-6 pb-16">
       {/* ヘッダー */}
-      <div className="flex items-center gap-3 mb-5">
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => router.push("/")}
+            className="text-sm font-semibold"
+            style={{ color: "var(--primary)" }}
+          >
+            ← 記録する
+          </button>
+          <h1 className="text-xl font-bold" style={{ color: "var(--primary-dark)" }}>記録一覧</h1>
+        </div>
         <button
-          onClick={() => router.push("/")}
-          className="text-sm font-semibold"
-          style={{ color: "var(--primary)" }}
+          onClick={handleExport}
+          disabled={logs.length === 0 || loading}
+          className="px-3 py-1.5 rounded-xl text-xs font-semibold border"
+          style={{ borderColor: "var(--border)", color: "var(--text-muted)" }}
         >
-          ← 記録する
+          書き出す
         </button>
-        <h1 className="text-xl font-bold" style={{ color: "var(--primary-dark)" }}>記録一覧</h1>
       </div>
 
       {/* 検索バー */}
