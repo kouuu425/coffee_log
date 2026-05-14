@@ -43,7 +43,7 @@ export default function Home() {
   }
 
   return (
-    <main className="max-w-lg mx-auto px-4 py-6 pb-16">
+    <main className="max-w-lg mx-auto px-4 py-6 pb-20" style={{ paddingBottom: "max(5rem, calc(1.5rem + env(safe-area-inset-bottom, 0px)))" }}>
       <div className="flex items-center justify-between mb-5">
         <h1 className="text-xl font-bold" style={{ color: "var(--primary-dark)" }}>
           Coffee Log

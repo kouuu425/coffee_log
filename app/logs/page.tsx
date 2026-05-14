@@ -176,7 +176,7 @@ export default function LogsPage() {
   });
 
   return (
-    <main className="max-w-lg mx-auto px-4 py-6 pb-16">
+    <main className="max-w-lg mx-auto px-4 py-6 pb-20" style={{ paddingBottom: "max(5rem, calc(1.5rem + env(safe-area-inset-bottom, 0px)))" }}>
       {/* ヘッダー */}
       <div className="flex items-center gap-3 mb-5">
         <button

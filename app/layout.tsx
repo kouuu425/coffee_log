@@ -11,6 +11,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  viewportFit: "cover", // iPhone ノッチ・Dynamic Island 対応
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

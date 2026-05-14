@@ -11,25 +11,35 @@
   --border: #d7ccc8;
 }
 
+/* ボックスサイズを統一（はみ出し防止） */
+*, *::before, *::after {
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+
+html {
+  overflow-x: hidden;
+}
+
 body {
   background-color: var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+  /* iPhone のホームインジケーター分の余白 */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* iOSのフォーカス時自動ズームを防ぐ（16px未満だとSafariが勝手にズームする） */
 input, select, textarea {
   font-size: 16px !important;
+  max-width: 100%;
+  min-width: 0;
 }
 
 /* iOSのボタンのデフォルトスタイルをリセット */
 button {
   -webkit-appearance: none;
   touch-action: manipulation;
-}
-
-/* スクロールを滑らかに */
-* {
-  -webkit-overflow-scrolling: touch;
 }
